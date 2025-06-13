@@ -1,6 +1,12 @@
 [
     {
-        "nombre": "beber agua",
-        "fecha_creacion": "2025-06-13"
+        "nombre": "caminar",
+        "fecha_creacion": "2025-06-13",
+        "categoria": "Ejercicio"
+    },
+    {
+        "nombre": "entrenar ",
+        "fecha_creacion": "2025-06-13",
+        "categoria": "Ejercicio"
     }
 ]
