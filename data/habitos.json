@@ -8,5 +8,10 @@
         "nombre": "entrenar ",
         "fecha_creacion": "2025-06-13",
         "categoria": "Ejercicio"
+    },
+    {
+        "nombre": "comer veruduras",
+        "fecha_creacion": "2025-06-13",
+        "categoria": "Nutrici\u00f3n"
     }
 ]

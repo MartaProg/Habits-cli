@@ -48,7 +48,7 @@ def ver_habitos():
 
 def guardar_habitos(): 
     with open("data/habitos.json","w")as archivo: 
-        json.dump(habitos,archivo, indent=4)
+        json.dump(habitos,archivo, indent=4, ensure_ascii=False)
 
 def ver_habito_categoria():
     categoria_elegida = input("Introduce una categoría para ver sus hábitos: ").lower()
