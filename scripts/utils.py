@@ -1,6 +1,7 @@
 from datetime import datetime
 import json
 
+RUTA_ARCHIVO = "data/habitos.json"
 
 habitos = []
 
@@ -11,14 +12,29 @@ def mostrar_menu():
           1: Añadir nuevo habito 
           2: Ver habitos existentes
           3: Ver habitos por categoría
-          4: Salir
+          4: Borrar habito
+          5: Salir
           """)
     
 
 
+
+def cargar_habitos(): 
+    try:
+        
+        with open(RUTA_ARCHIVO,"r",encoding="utf-8")as archivo: 
+            datos = json.load(archivo)
+            habitos.extend(datos)
+    except json.JSONDecodeError:
+                print("El archivo JSON está dañado o vacío.")
+    except FileNotFoundError:
+        print("El archivo 'habitos.json' no existe todavía. Se creará cuando añadas hábitos.")
+        
+cargar_habitos()
+
 def añadir_habito(): 
     nuevo_habito = input("Introduce el nuevo hábito que deseas añadir: ").lower()
-    categoria = input("Introduce la categoría del habito.")
+    categoria = input("Introduce la categoría del habito.").lower()
     while categoria.strip() == "":
         categoria = input("Por favor, introduce una categoría válida: ").strip()
 
@@ -47,9 +63,22 @@ def ver_habitos():
         print(f"{nombre} (añadido el  {fecha} -- Categoría: {categoria})")
 
 def guardar_habitos(): 
-    with open("data/habitos.json","w")as archivo: 
+    with open(RUTA_ARCHIVO,"w")as archivo: 
         json.dump(habitos,archivo, indent=4, ensure_ascii=False)
 
+def borrar_habito():
+    habito_borrar = input("Elija un habito a borrar: ").lower().strip()
+    for habito in habitos: 
+            if habito["nombre"].strip().lower() == habito_borrar: 
+                habitos.remove(habito)
+                guardar_habitos()
+                print(f"Habitdo eliminado: {habito}")
+                return
+                
+    print("Habito no encontrado.")
+
+
+        
 def ver_habito_categoria():
     categoria_elegida = input("Introduce una categoría para ver sus hábitos: ").lower()
     encontrado = False

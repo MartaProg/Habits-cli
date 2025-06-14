@@ -1,10 +1,9 @@
 import scripts.utils as utils
 
-
 def main():
         while True: 
             utils.mostrar_menu()
-            opcion = input("Elige una opción (1-4): ")
+            opcion = input("Elige una opción (1-5): ")
 
             if opcion == "1":
                 utils.añadir_habito()
@@ -14,6 +13,9 @@ def main():
                 utils.ver_habito_categoria()
 
             elif opcion == "4":
+                utils.borrar_habito()
+            
+            elif opcion == "5":
                 print("Hasta luego.")
                 break
             else:
