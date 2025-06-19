@@ -1,7 +1,20 @@
-[
-    {
-        "nombre": "caminar",
-        "fecha_creacion": "2025-06-14",
-        "categoria": "ejercicio"
-    }
-]
+{
+    "ejercicio": [
+        {
+            "nombre": "caminar",
+            "fecha_creacion": "2025-06-14"
+        }
+    ],
+    "salud": [
+        {
+            "nombre": "medita",
+            "fecha_creacion": "2025-06-14"
+        }
+    ],
+    "diversion": [
+        {
+            "nombre": "salir",
+            "fecha_creacion": "2025-06-19"
+        }
+    ]
+}
