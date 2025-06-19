@@ -1,9 +1,10 @@
 from datetime import datetime
 import json
-
+from collections import defaultdict
+import os
 RUTA_ARCHIVO = "data/habitos.json"
 
-habitos = []
+habitos = {}
 
 
 def mostrar_menu(): 
@@ -20,11 +21,12 @@ def mostrar_menu():
 
 
 def cargar_habitos(): 
+    global habitos
     try:
         
         with open(RUTA_ARCHIVO,"r",encoding="utf-8")as archivo: 
             datos = json.load(archivo)
-            habitos.extend(datos)
+            habitos.update(datos)
     except json.JSONDecodeError:
                 print("El archivo JSON está dañado o vacío.")
     except FileNotFoundError:
@@ -39,38 +41,59 @@ def añadir_habito():
         categoria = input("Por favor, introduce una categoría válida: ").strip()
 
     existe = False
-    for habito in habitos:
+    for habito in habitos.get(categoria, []):
         if habito["nombre"].lower() == nuevo_habito:
-            existe = True
-            break
+                existe = True
+                break
 
     if existe:
         print(" Ese hábito ya está en la lista.")
     else:
         fecha_actual = datetime.today().strftime("%Y-%m-%d")
-        dic_habito = {"nombre": nuevo_habito, "fecha_creacion": fecha_actual, "categoria": categoria}
-        habitos.append(dic_habito)
+        dic_habito = {"nombre": nuevo_habito, "fecha_creacion": fecha_actual}
+        habitos.setdefault(categoria, []).append(dic_habito)
+
         print(" Hábito añadido con éxito.")
     guardar_habitos()
 
 def ver_habitos(): 
     if not habitos: 
         print("No tienes habitos aún. Usa la opción 1 para añadir uno")
-    for habito in habitos:
-        nombre = habito["nombre"]
-        fecha = habito["fecha_creacion"]
-        categoria = habito["categoria"]
-        print(f"{nombre} (añadido el  {fecha} -- Categoría: {categoria})")
+        return
+    for categoria, lista_habitos in habitos.items():
+        for habito in lista_habitos:
+            nombre = habito["nombre"]
+            fecha = habito["fecha_creacion"]
+            
+            print(f"{nombre} (añadido el  {fecha} -- Categoría: {categoria})")
 
-def guardar_habitos(): 
-    with open(RUTA_ARCHIVO,"w")as archivo: 
-        json.dump(habitos,archivo, indent=4, ensure_ascii=False)
+
+    
+def guardar_habitos():
+    agrupados = defaultdict(list)
+    for categoria, lista_habitos in habitos.items():
+        agrupados[categoria].extend(lista_habitos)
+
+    os.makedirs("data", exist_ok=True)
+    with open(RUTA_ARCHIVO, "w", encoding="utf-8") as archivo:
+        json.dump(agrupados, archivo, indent=4, ensure_ascii=False)
+
+
+
+
 
 def borrar_habito():
+    categoria_borrar_habito = input("¿De qué categoría quieres borrar un hábito?: ").strip().lower()
+
     habito_borrar = input("Elija un habito a borrar: ").lower().strip()
-    for habito in habitos: 
+    if categoria_borrar_habito not in habitos:
+        print("Esa categoría no existe.")
+        return
+    else:    
+        for habito in habitos[categoria_borrar_habito]: 
             if habito["nombre"].strip().lower() == habito_borrar: 
-                habitos.remove(habito)
+                habitos[categoria_borrar_habito].remove(habito)
+
                 guardar_habitos()
                 print(f"Habitdo eliminado: {habito}")
                 return
@@ -78,19 +101,14 @@ def borrar_habito():
     print("Habito no encontrado.")
 
 
-        
 def ver_habito_categoria():
     categoria_elegida = input("Introduce una categoría para ver sus hábitos: ").lower()
-    encontrado = False
 
-    for habito in habitos:
-        if habito["categoria"].lower() == categoria_elegida:
-            if not encontrado:
-                print(f"\nHábitos de la categoría: {categoria_elegida}")
-                encontrado = True
-            nombre = habito["nombre"]
-            fecha = habito["fecha_creacion"]
-            print(f"- {nombre} (añadido el {fecha})")
-
-    if not encontrado:
+    if categoria_elegida in habitos:
+        print(f"\nHábitos de la categoría: {categoria_elegida}")
+        for habito in habitos[categoria_elegida]:
+                nombre = habito["nombre"]
+                fecha = habito["fecha_creacion"]
+                print(f"- {nombre} (añadido el {fecha})")
+    else:
         print(f"No se encontraron hábitos en la categoría '{categoria_elegida}'.")
